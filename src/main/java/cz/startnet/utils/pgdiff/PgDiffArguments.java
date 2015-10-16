@@ -65,6 +65,46 @@ public class PgDiffArguments {
      * Whether Slony triggers should be ignored.
      */
     private boolean ignoreSlonyTriggers;
+    
+    private boolean onlyPKDiff = false;
+    
+    private boolean onlyFKDiff = false;
+    
+    private boolean onlyFunctionDiff = false;
+    
+    private boolean onlyTableDiff = false;
+
+    public boolean isOnlyTableDiff() {
+        return onlyTableDiff;
+    }
+
+    public void setOnlyTableDiff(boolean onlyTableStructure) {
+        this.onlyTableDiff = onlyTableStructure;
+    }
+
+    public boolean isOnlyPKDiff() {
+        return onlyPKDiff;
+    }
+
+    public void setOnlyPKDiff(boolean onlyPKDiff) {
+        this.onlyPKDiff = onlyPKDiff;
+    }
+
+    public boolean isOnlyFKDiff() {
+        return onlyFKDiff;
+    }
+
+    public void setOnlyFKDiff(boolean onlyFKDiff) {
+        this.onlyFKDiff = onlyFKDiff;
+    }
+
+    public boolean isOnlyFunctionDiff() {
+        return onlyFunctionDiff;
+    }
+
+    public void setOnlyFunctionDiff(boolean onlyFunctionDiff) {
+        this.onlyFunctionDiff = onlyFunctionDiff;
+    }
 
     /**
      * Setter for {@link #addDefaults}.
@@ -255,6 +295,26 @@ public class PgDiffArguments {
                 setOutputIgnoredStatements(true);
             } else if ("--version".equals(args[i])) {
                 setVersion(true);
+            } else if ("--only-pk-diff".equals(args[i])) {
+                setOnlyPKDiff(true);
+                setOnlyFKDiff(false);
+                setOnlyFunctionDiff(false);
+                setOnlyTableDiff(false);
+            } else if ("--only-fk-diff".equals(args[i])) {
+                setOnlyPKDiff(false);
+                setOnlyFKDiff(true);
+                setOnlyFunctionDiff(false);
+                setOnlyTableDiff(false);
+            } else if ("--only-function-diff".equals(args[i])) {
+                setOnlyPKDiff(false);
+                setOnlyFKDiff(false);
+                setOnlyFunctionDiff(true);
+                setOnlyTableDiff(false);
+            } else if ("--only-table-diff".equals(args[i])) {
+                setOnlyPKDiff(false);
+                setOnlyFKDiff(false);
+                setOnlyFunctionDiff(false);
+                setOnlyTableDiff(true);
             } else {
                 writer.print(Resources.getString("ErrorUnknownOption"));
                 writer.print(": ");

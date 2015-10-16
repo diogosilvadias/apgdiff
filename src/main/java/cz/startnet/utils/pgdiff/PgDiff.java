@@ -221,18 +221,68 @@ public class PgDiff {
                             PgDiffUtils.getQuotedName(newSchema.getName()));
                     writer.println(" IS NULL;");
                 }
+            }            
+            
+            if (arguments.isOnlyFunctionDiff()) {
+                PgDiffFunctions.dropFunctions(
+                    writer, arguments, oldSchema, newSchema, searchPathHelper);
+                
+                PgDiffFunctions.createFunctions(
+                    writer, arguments, oldSchema, newSchema, searchPathHelper);
+                
+                continue;
             }
+            
+            if (arguments.isOnlyPKDiff()) {
+                PgDiffConstraints.dropConstraints(
+                    writer, oldSchema, newSchema, true, searchPathHelper);
+                
+                PgDiffConstraints.createConstraints(
+                    writer, oldSchema, newSchema, true, searchPathHelper);
+                
+                continue;
+            }
+            
+            if (arguments.isOnlyFKDiff()) {
+                PgDiffConstraints.dropConstraints(
+                    writer, oldSchema, newSchema, false, searchPathHelper);
+                
+                PgDiffConstraints.createConstraints(
+                    writer, oldSchema, newSchema, false, searchPathHelper);
+                
+                continue;
+            }
+            
+            if (arguments.isOnlyTableDiff()) {
+                PgDiffTables.dropTables(
+                    writer, oldSchema, newSchema, searchPathHelper);
+                
+                PgDiffSequences.dropSequences(
+                        writer, oldSchema, newSchema, searchPathHelper);
 
+                PgDiffSequences.createSequences(
+                        writer, oldSchema, newSchema, searchPathHelper);
+                
+                PgDiffSequences.alterSequences(
+                        writer, arguments, oldSchema, newSchema, searchPathHelper);
+                
+                PgDiffTables.createTables(
+                        writer, oldSchema, newSchema, searchPathHelper);
+                
+                PgDiffTables.alterTables(
+                        writer, arguments, oldSchema, newSchema, searchPathHelper);
+                PgDiffSequences.alterCreatedSequences(
+                        writer, oldSchema, newSchema, searchPathHelper);
+                
+                continue;
+            }
+            
             PgDiffTriggers.dropTriggers(
                     writer, oldSchema, newSchema, searchPathHelper);
-            PgDiffFunctions.dropFunctions(
-                    writer, arguments, oldSchema, newSchema, searchPathHelper);
+            
             PgDiffViews.dropViews(
                     writer, oldSchema, newSchema, searchPathHelper);
-            PgDiffConstraints.dropConstraints(
-                    writer, oldSchema, newSchema, true, searchPathHelper);
-            PgDiffConstraints.dropConstraints(
-                    writer, oldSchema, newSchema, false, searchPathHelper);
+            
             PgDiffIndexes.dropIndexes(
                     writer, oldSchema, newSchema, searchPathHelper);
             PgDiffTables.dropClusters(
